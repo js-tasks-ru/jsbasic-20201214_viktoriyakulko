@@ -4,8 +4,7 @@
  * @returns {boolean}
  */
 function checkSpam(str) {
-  let updatedStr = str.toLowerCase();
+  const lowerCaseStr = str.toLowerCase();
 
-  return updatedStr.includes('1xbet') || updatedStr.includes('xxx');
+  return lowerCaseStr.includes('1xbet') || lowerCaseStr.includes('xxx');
 }
-
