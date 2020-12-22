@@ -5,7 +5,7 @@
  */
 function isEmpty(obj) {
   // ваш код...
-  for (let key in obj) {
+  for (const key in obj) {
     if (key) return false;
   }
 
