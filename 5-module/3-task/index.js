@@ -2,34 +2,33 @@ function initCarousel() {
   const arrowLeft = document.querySelector('.carousel__arrow_left');
   const arrowRight = document.querySelector('.carousel__arrow_right');
   const slideWidth = document.querySelector('.carousel__slide').offsetWidth;
+  const slidesAmount = document.querySelectorAll('.carousel__slide').length;
+  const sliderVisibleLength = slideWidth * (slidesAmount - 1);
   let currentPosition = 0;
 
-  toggleButtonsVisible();
+  toggleButtonsVisible(currentPosition);
 
   arrowLeft.addEventListener('click', () => {
     currentPosition += slideWidth;
-    manageSlider();
+    manageSlider(currentPosition);
   });
 
   arrowRight.addEventListener('click', () => {
     currentPosition -= slideWidth;
-    manageSlider();
+    manageSlider(currentPosition);
   });
 
-  function manageSlider() {
-    moveSlider();
-    toggleButtonsVisible();
+  function manageSlider(currentPosition) {
+    moveSlider(currentPosition);
+    toggleButtonsVisible(currentPosition);
   }
 
-  function toggleButtonsVisible() {
-    const slidesAmount = document.querySelectorAll('.carousel__slide').length;
-    const sliderVisibleLength = slideWidth * (slidesAmount - 1);
-
+  function toggleButtonsVisible(currentPosition) {
     currentPosition >= 0  ? hideElem(arrowLeft) : showElem(arrowLeft);
     currentPosition <= -sliderVisibleLength ? hideElem(arrowRight) : showElem(arrowRight);
   }
 
-  function moveSlider() {
+  function moveSlider(currentPosition) {
     document.querySelector('.carousel__inner').style.transform = `translateX(${currentPosition}px)`;
   }
 }
