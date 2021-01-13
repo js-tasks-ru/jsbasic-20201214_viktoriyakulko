@@ -10,7 +10,9 @@ export default class Carousel {
     this._currentPosition = 0;
     this._currentSlide = 1;
 
-    this._onButtonClick = this._onButtonClick.bind(this);
+    this._onArrowLeftClick = this._onArrowLeftClick.bind(this);
+    this._onArrowRightClick = this._onArrowRightClick.bind(this);
+    this._onCarouselInnerClick = this._onCarouselInnerClick.bind(this);
 
     this.elem = this._render();
   }
@@ -29,27 +31,47 @@ export default class Carousel {
     this._carouselInner = carousel.querySelector('.carousel__inner');
 
     this._toggleButtonsVisibility();
-
-    this._arrowLeft.addEventListener('click', () => {
-      this._currentPosition += this.slideWidth;
-      this._currentSlide--;
-      this._manageSlider();
-    });
-
-    this._arrowRight.addEventListener('click', () => {
-      this._currentPosition -= this.slideWidth;
-      this._currentSlide++;
-      this._manageSlider();
-    });
-
-    this._carouselInner.addEventListener('click', (e) => {
-      const target = e.target;
-
-      if(!target.closest('.carousel__button')) return;
-      this._onButtonClick(target.closest('.carousel__slide').dataset.id);
-    });
+    this._addEventListeners();
 
     return carousel;
+  }
+
+  _addEventListeners() {
+    this._arrowLeft.addEventListener('click', this._onArrowLeftClick);
+    this._arrowRight.addEventListener('click', this._onArrowRightClick);
+    this._carouselInner.addEventListener('click', this._onCarouselInnerClick);
+  }
+
+  destroy() {
+    this._arrowLeft.removeEventListener('click', this._onArrowLeftClick);
+    this._arrowRight.removeEventListener('click', this._onArrowRightClick);
+    this._carouselInner.removeEventListener('click', this._onCarouselInnerClick);
+    this.elem.remove();
+  }
+
+  _onArrowLeftClick() {
+    this._currentPosition += this.slideWidth;
+    this._currentSlide--;
+    this._manageSlider();
+  }
+
+  _onArrowRightClick() {
+    this._currentPosition -= this.slideWidth;
+    this._currentSlide++;
+    this._manageSlider();
+  }
+
+  _onCarouselInnerClick(e) {
+    const target = e.target;
+
+    if(!target.closest('.carousel__button')) return;
+
+    const event = new CustomEvent('product-add', {
+      detail: target.closest('.carousel__slide').dataset.id,
+      bubbles: true
+    });
+
+    this.elem.dispatchEvent(event);
   }
 
   _manageSlider() {
@@ -60,12 +82,6 @@ export default class Carousel {
   _toggleButtonsVisibility() {
     this._arrowLeft.style.display = this._currentSlide <= 1 ? 'none' : 'flex';
     this._arrowRight.style.display = this._currentSlide >= this.slides.length ? 'none' : 'flex';
-  }
-
-  _onButtonClick(id) {
-    const event = new CustomEvent('product-add', { detail: id, bubbles: true });
-
-    this.elem.dispatchEvent(event);
   }
 }
 
