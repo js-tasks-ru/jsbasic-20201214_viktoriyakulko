@@ -43,9 +43,10 @@ export default class RibbonMenu {
     });
 
     this._menu.addEventListener('scroll', () => {
+      const scrollLeft = this._menu.scrollLeft != 0;
       const scrollRight = this._menu.scrollWidth - this._menu.scrollLeft - this._menu.clientWidth;
 
-      this._arrowLeft.classList.toggle('ribbon__arrow_visible', this._menu.scrollLeft != 0);
+      this._arrowLeft.classList.toggle('ribbon__arrow_visible', scrollLeft);
       this._arrowRight.classList.toggle('ribbon__arrow_visible', scrollRight);
     });
 

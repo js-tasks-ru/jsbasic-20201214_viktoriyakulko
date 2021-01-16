@@ -4,6 +4,8 @@ export default class Modal {
   constructor() {
     this._title = null;
     this._body = null;
+    this._container = null;
+    this._buttonClose = null;
   }
 
   setTitle(title) {
@@ -11,30 +13,41 @@ export default class Modal {
   }
 
   setBody(body) {
-    this._body = body;
+    this._body = createElement(`<div class="modal__body"></div>`);
+    this._body.append(body);
+  };
+
+  _render(parent) {
+    const template = modalTemplate({ title: this._title });
+
+    this._container = createElement(template);
+    parent.classList.add('is-modal-open');
+    parent.append(this._container);
+
+    this._buttonClose = document.querySelector('.modal__close');
+
+    this._container.querySelector('.modal__inner').append(this._body);
+
+    this._addEventListeners();
+  }
+
+  _addEventListeners() {
+    this._buttonClose.addEventListener('click', () => this.close());
+    document.addEventListener('keydown', (e) => this._keyDownEscape(e));
+  }
+
+  _keyDownEscape(e) {
+    if (e.code == 'Escape') this.close();
   }
 
   open() {
-    const template = modalTemplate({ title: this._title });
-
-    document.body.classList.add('is-modal-open');
-    document.body.insertAdjacentHTML('beforeend', template);
-
-    const modalBody = document.querySelector('.modal__body');
-    const buttonClose = document.querySelector('.modal__close');
-
-    modalBody.innerHTML = '';
-    modalBody.append(this._body);
-
-    buttonClose.addEventListener('click', this.close);
-    document.addEventListener('keydown', (e) => {
-      if (e.code == 'Escape') this.close();
-    });
+    this._render(document.body);
   }
 
   close() {
     document.body.classList.remove('is-modal-open');
-    document.body.removeChild(document.body.lastElementChild);
+    this._container.remove();
+    document.removeEventListener('keydown', (e) => this._keyDownEscape(e));
   }
 }
 
@@ -51,8 +64,6 @@ function modalTemplate({ title = ''} = {}) {
 
           <h3 class="modal__title">${ title }</h3>
         </div>
-
-        <div class="modal__body"></div>
       </div>
     </div>
   `;
