@@ -33,10 +33,10 @@ export default class Modal {
 
   _addEventListeners() {
     this._buttonClose.addEventListener('click', () => this.close());
-    document.addEventListener('keydown', (e) => this._keyDownEscape(e));
+    document.addEventListener('keydown', (e) => this._onKeyDownEscape(e));
   }
 
-  _keyDownEscape(e) {
+  _onKeyDownEscape(e) {
     if (e.code == 'Escape') this.close();
   }
 
@@ -47,7 +47,7 @@ export default class Modal {
   close() {
     document.body.classList.remove('is-modal-open');
     this._container.remove();
-    document.removeEventListener('keydown', (e) => this._keyDownEscape(e));
+    document.removeEventListener('keydown', (e) => this._onKeyDownEscape(e));
   }
 }
 
