@@ -30,12 +30,12 @@ export default class StepSlider {
     });
 
     this._container = createElement(template);
-    this._changeSlider(this._container);
+    this._changeSlider();
   }
 
   _changeSlider() {
     const thumb = this._container.querySelector('.slider__thumb');
-    const value = this._container.querySelector('.slider__value');
+    const thumbValue = this._container.querySelector('.slider__value');
     const progress = this._container.querySelector('.slider__progress');
     const steps = [...this._container.querySelector('.slider__steps').children];
 
@@ -47,7 +47,7 @@ export default class StepSlider {
       this._value = Math.round(left / this._container.offsetWidth * this._segments);
 
       steps[this._value].classList.add('slider__step-active');
-      value.textContent = this._value;
+      thumbValue.textContent = this._value;
       thumb.style.left = this._valuePercents + '%';
       progress.style.width = this._valuePercents + '%';
       
