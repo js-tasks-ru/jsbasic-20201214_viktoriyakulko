@@ -4,6 +4,7 @@ export default class StepSlider {
   constructor({ steps, value = 0 }) {
     this._steps = steps;
     this._currentValue = value;
+    this._valueDinamicPercents = null;
 
     this._container = null;
     this._thumb = null;
@@ -56,12 +57,9 @@ export default class StepSlider {
   }
 
   _onContainerClick = (e) => {
-    let left = e.clientX - this._container.getBoundingClientRect().left;
-
-    this._stepMarks[this._currentValue].classList.remove('slider__step-active');
-    this._currentValue = Math.round(left / this._container.offsetWidth * this._segments);
-    this._stepMarks[this._currentValue].classList.add('slider__step-active');
-
+    this._removeActiveStepMark();
+    this._setCurrentParams(e);
+    this._addActiveStepMark();
     this._displayChange(this._valueSegmentsPercents);
     this._createSliderChangeEvent();
   }
@@ -69,36 +67,48 @@ export default class StepSlider {
   _onThumbPointerDown = (e) => {
     e.preventDefault();
     this._container.classList.add('slider_dragging');
-    this._stepMarks[this._currentValue].classList.remove('slider__step-active');
+    this._removeActiveStepMark();
     document.addEventListener('pointermove', this._onDocumentPointerMove);
     document.addEventListener('pointerup', this._onDocumentPointerUp);
   }
 
   _onDocumentPointerMove = (e) => {
-    let left = e.clientX - this._container.getBoundingClientRect().left;
-    let leftPercents = Math.round(left / this._container.offsetWidth * 100);
-
-    if (leftPercents < 0) leftPercents = 0;
-    if (leftPercents > 100) leftPercents = 100;
-
-    this._currentValue = Math.round(left / this._container.offsetWidth * this._segments);
-
-    this._displayChange(leftPercents);
+    this._setCurrentParams(e);
+    this._displayChange(this._valueDinamicPercents);
     this._createSliderChangeEvent();
   }
 
   _onDocumentPointerUp = () => {
-    this._stepMarks[this._currentValue].classList.add('slider__step-active');
     this._displayChange(this._valueSegmentsPercents);
+    this._addActiveStepMark();
     this._createSliderChangeEvent();
     this._container.classList.remove('slider_dragging');
     document.removeEventListener('pointermove', this._onDocumentPointerMove);
+  }
+
+  _setCurrentParams(e) {
+    let left = e.clientX - this._container.getBoundingClientRect().left;
+    let leftRelative = left / this.elem.offsetWidth;
+
+    if (leftRelative < 0) leftRelative = 0;
+    if (leftRelative > 1) leftRelative = 1;
+
+    this._valueDinamicPercents = leftRelative * 100;
+    this._currentValue = Math.round(leftRelative * this._segments);
   }
 
   _displayChange(percents) {
     this._thumbValue.textContent = this._currentValue;
     this._thumb.style.left = percents + '%';
     this._progress.style.width = percents + '%';
+  }
+
+  _removeActiveStepMark() {
+    this._stepMarks[this ._currentValue].classList.remove('slider__step-active');
+  }
+
+  _addActiveStepMark() {
+    this._stepMarks[this ._currentValue].classList.add('slider__step-active');
   }
 
   _createSliderChangeEvent() {
