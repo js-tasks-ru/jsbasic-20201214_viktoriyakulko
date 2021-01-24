@@ -2,8 +2,7 @@ import createElement from '../../assets/lib/create-element.js';
 
 export default class CartIcon {
   constructor() {
-    this._minTopCoordinate = null;
-
+    this.minTopCoordinate = null;
     this.render();
 
     this.addEventListeners();
@@ -23,7 +22,6 @@ export default class CartIcon {
           <span class="cart-icon__price">€${cart.getTotalPrice().toFixed(2)}</span>
         </div>`;
 
-      this._minTopCoordinate = this.elem.getBoundingClientRect().top + window.pageXOffset;
       this.updatePosition();
 
       this.elem.classList.add('shake');
@@ -42,27 +40,40 @@ export default class CartIcon {
   }
 
   updatePosition() {
-    if (!this.elem.classList.contains('cart-icon_visible')) return false;
+    if (!this.elem.offsetHeight) return false;
 
     let isMobile = document.documentElement.clientWidth <= 767;
+    let styles = this.getStyles();
+
+    if (!this.minTopCoordinate) {
+      this.minTopCoordinate = this.elem.getBoundingClientRect().top + window.pageYOffset;
+    }
+
+    if (isMobile || window.pageYOffset <= this.minTopCoordinate) {
+      this.resetStyles(styles);
+    }
+
+    Object.assign(this.elem.style, styles);
+  }
+
+  getStyles() {
     let leftCoordinate = Math.min(
       document.querySelector('.container').getBoundingClientRect().right + 20,
       document.documentElement.clientWidth - this.elem.offsetWidth - 10
     );
-    let scrollStyles = {
+
+    return {
       position: 'fixed',
       top: '50px',
       right: '10px',
       left: leftCoordinate + 'px',
-      zIndex: 100,
-    };
-
-    if (isMobile || window.pageYOffset <= this._minTopCoordinate) {
-      for (let key in scrollStyles) {
-        scrollStyles[key] = '';
-      }
+      zIndex: 100
     }
+  }
 
-    Object.assign(this.elem.style, scrollStyles);
+  resetStyles(styles) {
+    for (let key in styles) {
+      styles[key] = '';
+    }
   }
 }

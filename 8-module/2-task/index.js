@@ -23,21 +23,21 @@ export default class ProductGrid {
   }
 
   _addProducts(products) {
-    this._container.firstElementChild.innerHTML = '';
+    const wrapper = this._container.querySelector('.products-grid__inner');
+
+    wrapper.innerHTML = '';
 
     products.forEach(product => {
       const card = new ProductCard(product).elem;
-      this._container.firstElementChild.append(card);
+      wrapper.append(card);
     });
   }
 
   updateFilter(filters) {
     this._filters = Object.assign(this._filters, filters);
 
-    let filteredProducts = [];
-    let { noNuts = false, vegeterianOnly = false, maxSpiciness = 0, category = '' } = this._filters;
-
-    filteredProducts = this._products
+    const { noNuts = false, vegeterianOnly = false, maxSpiciness = 0, category = '' } = this._filters;
+    const filteredProducts = this._products
       .filter(product => noNuts ? noNuts == !product.nuts : product)
       .filter(product => vegeterianOnly ? vegeterianOnly == product.vegeterian : product)
       .filter(product => maxSpiciness ? product.spiciness <= maxSpiciness : product )
