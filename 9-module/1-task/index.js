@@ -4,6 +4,6 @@
  * @returns {Promise}
  */
 
-export default function promiseClick(button) {
-  // ваш код...
+export default async function promiseClick(button) {
+  button.addEventListener('click', event => event, { once: true });
 }
