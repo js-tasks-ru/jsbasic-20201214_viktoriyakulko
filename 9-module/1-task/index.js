@@ -5,5 +5,9 @@
  */
 
 export default async function promiseClick(button) {
-  button.addEventListener('click', event => event, { once: true });
+  return new Promise(resolve => {
+  	button.addEventListener('click', (event) => {
+     	resolve(event);
+  	}, { once: true });
+  });
 }
