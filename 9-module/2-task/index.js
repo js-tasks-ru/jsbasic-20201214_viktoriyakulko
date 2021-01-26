@@ -13,20 +13,25 @@ import Cart from '../../8-module/4-task/index.js';
 export default class Main {
 
   constructor() {
-    this.carousel = new Carousel(slides);
-    this.ribbonMenu = new RibbonMenu(categories);
-    this.stepSlider = new StepSlider({ steps: 5, value: 3 });
-    this.cartIcon = new CartIcon();
-    this.cart = new Cart(this.cartIcon);
+    this.carousel = null;
+    this.ribbonMenu = null;
+    this.stepSlider = null;
+    this.cartIcon = null;
+    this.cart = null;
     this.productsGrid = null;
     this.products = null;
   }
 
   async render() {
+    this.carousel = new Carousel(slides);
     document.querySelector('[data-carousel-holder]').append(this.carousel.elem);
+    this.ribbonMenu = new RibbonMenu(categories);
     document.querySelector('[data-ribbon-holder]').append(this.ribbonMenu.elem);
+    this.stepSlider = new StepSlider({ steps: 5, value: 3 });
     document.querySelector('[data-slider-holder]').append(this.stepSlider.elem);
+    this.cartIcon = new CartIcon();
     document.querySelector('[data-cart-icon-holder]').append(this.cartIcon.elem);
+    this.cart = new Cart(this.cartIcon);
 
     await this.showProducts();
 
@@ -41,16 +46,18 @@ export default class Main {
   }
 
   async getProducts() {
-    const response = await fetch('products.json');
-    let products = [];
+    try {
+      const response = await fetch('products.json');
+      let products = [];
 
-    if (response.ok) {
-      products = await response.json();
-    } else {
-      console.log('Ошибка: ' + response.status);
-    }
+      if (response.ok) {
+        products = await response.json();
+      }
+      return products;
 
-    return products;
+    } catch(err) {
+      console.log(`Ошибка: ${err.name} ${err.message}`);
+    } 
   }
 
   async showProducts() {

@@ -4,7 +4,7 @@
  * @returns {Promise}
  */
 
-export default async function promiseClick(button) {
+export default function promiseClick(button) {
   return new Promise(resolve => {
   	button.addEventListener('click', (event) => {
      	resolve(event);
